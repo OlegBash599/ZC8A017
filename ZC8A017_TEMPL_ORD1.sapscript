@@ -1,0 +1,19 @@
+*	 	<B>Customer ID:</B> $KUNNR$ <BR/>
+*	 	Customer Name: $KUNNR_TXT$ <BR/>
+*	 	Order Number (internal): $ORDER_NUM$ <BR/>
+*	 	Customer Number (external): $CUSTOMER_ORDER$ <BR/>
+*	 	                                                                        
+*	 	Items of order is below:
+*	 	<table>
+*	 	$[ORDER_LINES$
+*	 	<TR>
+*	 	<TD> Material: $MATNR$ ;</TD>
+*	 	<TD>  Quantity: <strong> $QUAN$ </strong> ;  </TD>
+*	 	</TR>
+*	 	                                                                        
+*	 	$ORDER_LINES]$
+*	 	</table>
+*	 	<BR/>
+*	 	Delivery Info Info: <BR/>
+*	 	City/Town: $DLVADDR-$CITY$ <BR/>
+*	 	Street+House: $DLVADDR-$STREET$, $DLVADDR-$HOUSE$ <BR/>
