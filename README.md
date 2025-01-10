@@ -1,5 +1,6 @@
 # ZC8A017 / FloridatString
 Templates for S/4 HANA
+Framework is called FloridaString because of Leningrad's singer [Florida Chanturia](https://vk.com/florida88888) and [bio is here](https://uznayvse.ru/znamenitosti/biografiya-floridachanturiya.html)
 
 Подробнее
 1) Как использовать sap-script тексты ([sapland.ru](https://sappro.sapland.ru/publications/vlozhennie-texti-kak-vozmozhnosti-dlya-kompozitsii-razdeleniya-na-chasti-v-dlinn.html) [dzen](https://dzen.ru/a/ZtsCgjkvRgtUwfHz) [habr](https://habr.com/ru/articles/841422/) )
@@ -10,3 +11,4 @@ Templates for S/4 HANA
 
 ------------------
 Добавлена возможно "убирать" неиспользованные переменные из шаблона.
+--------------
