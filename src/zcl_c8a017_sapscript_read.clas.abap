@@ -12,6 +12,9 @@ CLASS zcl_c8a017_sapscript_read DEFINITION
     METHODS r_as_string
       RETURNING VALUE(rv) TYPE string.
 
+    METHODS r_as_str_lines
+      EXPORTING et TYPE zif_c8a017_types=>tt_tline_str.
+
   PROTECTED SECTION.
   PRIVATE SECTION.
     TYPES: ts_var_templ TYPE zif_c8a017_types=>ts_var_templ.
@@ -28,6 +31,9 @@ CLASS zcl_c8a017_sapscript_read DEFINITION
       CHANGING cs_txt_head  TYPE thead
                ct_txt_lines TYPE tline_tab.
 
+    METHODS _r_as_tlines
+      EXPORTING et TYPE tline_tab.
+
     METHODS _concat_text
       IMPORTING it_txt_lines TYPE tline_tab
       RETURNING VALUE(rv)    TYPE string.
@@ -43,10 +49,24 @@ CLASS zcl_c8a017_sapscript_read IMPLEMENTATION.
 
   METHOD r_as_string.
     "  RETURNING VALUE(rv) TYPE string.
-    DATA ls_txt_head_out  TYPE thead.
+
     DATA lt_txt_lines     TYPE tline_tab.
 
     CLEAR mv_long_text.
+    _r_as_tlines( IMPORTING  et = lt_txt_lines ).
+
+    mv_long_text = _concat_text( lt_txt_lines ).
+
+    rv = mv_long_text.
+
+  ENDMETHOD.
+
+  METHOD _r_as_tlines.
+    "EXPORTING et TYPE tline_tab.
+    DATA ls_txt_head_out  TYPE thead.
+    DATA lt_txt_lines     TYPE tline_tab.
+
+
 
     _read_text_lines( EXPORTING is_txt_head = ms_thead
                       IMPORTING es_txt_head = ls_txt_head_out
@@ -56,9 +76,41 @@ CLASS zcl_c8a017_sapscript_read IMPLEMENTATION.
                                       ct_txt_lines = lt_txt_lines ).
 
 
-    mv_long_text = _concat_text( lt_txt_lines ).
 
-    rv = mv_long_text.
+    et = lt_txt_lines.
+  ENDMETHOD.
+
+  METHOD r_as_str_lines.
+    "EXPORTING et TYPE zif_c8a017_types=>tt_tline_str.
+    DATA lt_txt_lines     TYPE tline_tab.
+
+    DATA lt_tline_str TYPE zif_c8a017_types=>tt_tline_str.
+    DATA ls_tline_str TYPE zif_c8a017_types=>ts_tline_str.
+
+    FIELD-SYMBOLS <fs_tline> TYPE tline.
+
+    CLEAR mv_long_text.
+    _r_as_tlines( IMPORTING  et = lt_txt_lines ).
+
+    CLEAR ls_tline_str.
+    LOOP AT lt_txt_lines ASSIGNING <fs_tline>.
+
+      CASE <fs_tline>-tdformat.
+
+        WHEN '='.
+          ls_tline_str-tdline_str =
+          ls_tline_str-tdline_str && <fs_tline>-tdline.
+        WHEN OTHERS.
+          ls_tline_str-tdformat = <fs_tline>-tdformat.
+          ls_tline_str-tdline_str = <fs_tline>-tdline.
+          APPEND ls_tline_str TO  lt_tline_str.
+          clear ls_tline_str.
+
+      ENDCASE.
+
+    ENDLOOP.
+
+    et = lt_tline_str.
 
   ENDMETHOD.
 

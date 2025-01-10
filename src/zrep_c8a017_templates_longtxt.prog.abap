@@ -25,21 +25,22 @@ CLASS lcl_app DEFINITION.
         , tt_tab_line TYPE STANDARD TABLE OF ts_tab_line WITH DEFAULT KEY
         .
 
-    TYPES: BEGIN OF TS_DELIV_ADDR
-              , CITY TYPE STRING
-              , STREET TYPE STRING
-              , HOUSE TYPE STRING
-           , END OF TS_DELIV_ADDR
+    TYPES: BEGIN OF ts_deliv_addr
+              , city TYPE string
+              , street TYPE string
+              , house TYPE string
+           , END OF ts_deliv_addr
            .
 
-    TYPES: BEGIN OF TS_OUT_DOC
-              , KUNNR TYPE KUNNR
-              , KUNNR_TXT TYPE TEXT80
-              , ORDER_NUM TYPE VBELN
-              , CUSTOMER_ORDER TYPE TEXT40
-              , ORDER_LINES TYPE TT_TAB_LINE
-              , DLVADDR TYPE TS_DELIV_ADDR
-          , END OF TS_OUT_DOC
+    TYPES: BEGIN OF ts_out_doc
+              , kunnr TYPE kunnr
+              , kunnr_txt TYPE text80
+              , order_num TYPE vbeln
+              , customer_order TYPE text40
+              , order_lines TYPE tt_tab_line
+              , dlvaddr TYPE ts_deliv_addr
+              , kunnr_empty TYPE kunnr
+          , END OF ts_out_doc
           .
 
 
@@ -68,7 +69,11 @@ CLASS lcl_app IMPLEMENTATION.
     DATA lo_so10_template TYPE REF TO zcl_c8a017_longtxt_templ.
     lo_so10_template = NEW #( is_txt_h = VALUE #( tdname = lv_txt_name ) ).
     lv_html_out =
-    lo_so10_template->data2template( ls_out_doc ).
+   " lo_so10_template->data2template( ls_out_doc ).
+    lo_so10_template->process_tmpl_with_data(
+      EXPORTING
+        is             = ls_out_doc
+    ).
 
     _show_html_out( lv_html_out ).
 
@@ -79,6 +84,7 @@ CLASS lcl_app IMPLEMENTATION.
     CLEAR es_out_doc .
 
     es_out_doc-kunnr = '1001'.
+    CLEAR es_out_doc-kunnr_empty. " example of empty field
     es_out_doc-kunnr_txt = 'Customer1001 Company Name'.
     es_out_doc-order_num = '3100012345'.
     es_out_doc-customer_order = 'EXT_CUST_123'.

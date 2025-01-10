@@ -7,6 +7,7 @@ CLASS zcl_c8a017_struct2templ DEFINITION
     METHODS fill_vars_in_template
       IMPORTING is_src          TYPE any
       CHANGING  cv_str_template TYPE string.
+
   PROTECTED SECTION.
   PRIVATE SECTION.
 
