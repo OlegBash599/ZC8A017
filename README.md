@@ -1,7 +1,6 @@
 # ZC8A017 / FloridaString
 FloridaString: Templates for S/4 HANA
-
-Framework is called FloridaString because of Leningrad's singer [Florida Chanturia](https://vk.com/florida88888) and [bio is here](https://uznayvse.ru/znamenitosti/biografiya-floridachanturiya.html)
+Шаблонизатор для использования в ERP. Работает на основе SapScript, Web-template, и любых текстовых файлов.
 
 Подробнее
 1) Как использовать sap-script тексты ([sapland.ru](https://sappro.sapland.ru/publications/vlozhennie-texti-kak-vozmozhnosti-dlya-kompozitsii-razdeleniya-na-chasti-v-dlinn.html) [dzen](https://dzen.ru/a/ZtsCgjkvRgtUwfHz) [habr](https://habr.com/ru/articles/841422/) )
@@ -17,3 +16,6 @@ Framework is called FloridaString because of Leningrad's singer [Florida Chantur
 2) IF_BEG / IF_END - функция условия, который позволяет раздлеить строки шаблона (без промежуточного ELSE). Добавлено просто блоком.
 3) FOR_BEG / FOR_END - функция обработки внутренней таблицы и применения контекста к таблицы к блоку
 --------------
+
+#### notes
+Framework is called FloridaString because of Leningrad's singer [Florida Chanturia](https://vk.com/florida88888) and [bio is here](https://uznayvse.ru/znamenitosti/biografiya-floridachanturiya.html)
