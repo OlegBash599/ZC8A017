@@ -20,6 +20,8 @@ CLASS zcl_c8a017_sapscript_read DEFINITION
     TYPES: ts_var_templ TYPE zif_c8a017_types=>ts_var_templ.
     TYPES: tt_var_templ TYPE zif_c8a017_types=>tt_var_templ.
 
+    TYPES: tt_tline_str TYPE zif_c8a017_types=>tt_tline_str.
+
     DATA ms_thead TYPE thead.
 
     METHODS _read_text_lines
@@ -37,6 +39,10 @@ CLASS zcl_c8a017_sapscript_read DEFINITION
     METHODS _concat_text
       IMPORTING it_txt_lines TYPE tline_tab
       RETURNING VALUE(rv)    TYPE string.
+
+    METHODS _map_tline2tstr
+      IMPORTING it_txt_lines TYPE tline_tab
+      EXPORTING et_tline_str TYPE tt_tline_str.
 
 ENDCLASS.
 
@@ -85,32 +91,44 @@ CLASS zcl_c8a017_sapscript_read IMPLEMENTATION.
     DATA lt_txt_lines     TYPE tline_tab.
 
     DATA lt_tline_str TYPE zif_c8a017_types=>tt_tline_str.
-    DATA ls_tline_str TYPE zif_c8a017_types=>ts_tline_str.
-
-    FIELD-SYMBOLS <fs_tline> TYPE tline.
 
     CLEAR mv_long_text.
     _r_as_tlines( IMPORTING  et = lt_txt_lines ).
 
-    CLEAR ls_tline_str.
-    LOOP AT lt_txt_lines ASSIGNING <fs_tline>.
+    _map_tline2tstr( EXPORTING it_txt_lines = lt_txt_lines
+                     IMPORTING et_tline_str = lt_tline_str ).
+
+    et = lt_tline_str.
+
+  ENDMETHOD.
+
+  METHOD _map_tline2tstr.
+    "importing it_txt_lines type tline_tab
+    "exporting et_tline_str type tt_tline_str.
+    DATA lt_tline_str TYPE zif_c8a017_types=>tt_tline_str.
+
+    FIELD-SYMBOLS <fs_tline> TYPE tline.
+    FIELD-SYMBOLS <fs_tline_str> TYPE zif_c8a017_types=>ts_tline_str.
+
+    LOOP AT it_txt_lines ASSIGNING <fs_tline>.
 
       CASE <fs_tline>-tdformat.
 
         WHEN '='.
-          ls_tline_str-tdline_str =
-          ls_tline_str-tdline_str && <fs_tline>-tdline.
+          IF <fs_tline_str> IS NOT ASSIGNED.
+            APPEND INITIAL LINE TO lt_tline_str ASSIGNING <fs_tline_str>.
+            <fs_tline_str>-tdformat = '*'.
+          ENDIF.
+          <fs_tline_str>-tdline_str =
+          <fs_tline_str>-tdline_str && <fs_tline>-tdline.
         WHEN OTHERS.
-          ls_tline_str-tdformat = <fs_tline>-tdformat.
-          ls_tline_str-tdline_str = <fs_tline>-tdline.
-          APPEND ls_tline_str TO  lt_tline_str.
-          clear ls_tline_str.
+          APPEND INITIAL LINE TO lt_tline_str ASSIGNING <fs_tline_str>.
+          <fs_tline_str>-tdformat = <fs_tline>-tdformat.
+          <fs_tline_str>-tdline_str = <fs_tline>-tdline.
 
       ENDCASE.
 
     ENDLOOP.
-
-    et = lt_tline_str.
 
   ENDMETHOD.
 
