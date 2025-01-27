@@ -18,5 +18,8 @@ FloridaString: Templates for S/4 HANA
 3) FOR_BEG / FOR_END - функция обработки внутренней таблицы и применения контекста к таблицы к блоку
 --------------
 
+##### Ссылка на стандартные ресурсы:
+1) использование [include subtemplate abap-simple transformation](https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenst_tt_include.htm)
+
 #### notes
 Framework is called FloridaString because of Leningrad's singer [Florida Chanturia](https://vk.com/florida88888) and [bio is here](https://uznayvse.ru/znamenitosti/biografiya-floridachanturiya.html)
