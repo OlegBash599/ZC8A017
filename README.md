@@ -20,6 +20,7 @@ FloridaString: Templates for S/4 HANA
 
 ##### Ссылка на стандартные ресурсы:
 1) использование [include subtemplate abap-simple transformation](https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenst_tt_include.htm)
+2) [xsl-include](https://developer.mozilla.org/en-US/docs/Web/XSLT/Element/include) и [xsl-include-xslt-dev](https://xsltdev.ru/xslt/xsl-include/)
 
 #### notes
 Framework is called FloridaString because of Leningrad's singer [Florida Chanturia](https://vk.com/florida88888) and [bio is here](https://uznayvse.ru/znamenitosti/biografiya-floridachanturiya.html)
