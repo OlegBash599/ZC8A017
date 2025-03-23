@@ -101,6 +101,7 @@ CLASS zcl_c8a017_func_flow IMPLEMENTATION.
     DATA lv_param_num TYPE syindex.
     DATA lv_val1_str TYPE string.
     DATA lv_val2_str TYPE string.
+    DATA lv_compare_operator TYPE string VALUE 'EQ'.
 
     FIELD-SYMBOLS <fs_func_params> TYPE zif_c8a017_types=>ts_func_param.
     FIELD-SYMBOLS <fs_src_in> TYPE any.
@@ -119,29 +120,61 @@ CLASS zcl_c8a017_func_flow IMPLEMENTATION.
               ASSIGN lv_val1_str TO <fs_val_str>.
             WHEN 2.
               ASSIGN lv_val2_str TO <fs_val_str>.
+            WHEN 3.
+              " comparison operator
+              lv_compare_operator = <fs_func_params>-p_val.
+              CONTINUE.
             WHEN OTHERS.
               EXIT.
           ENDCASE.
 
           IF <fs_func_params>-p_val CP '$*$'.
             lv_trg_fieldname = mo_func_frame->get_trg_fieldname( iv_rtti_param = <fs_func_params>-p_val ).
-            "            ASSIGN msr_src->* TO <fs_src_in>.
             ASSIGN is_cntx TO <fs_src_in>.
             IF sy-subrc EQ 0.
               mo_func_frame->read_trg_value_as_str( EXPORTING iv_fnm       = lv_trg_fieldname
                                                 is_cntx      = <fs_src_in>
                                       IMPORTING ev_val_str   = <fs_val_str> ).
+            ELSE.
             ENDIF.
 
           ELSE.
             <fs_val_str> = <fs_func_params>-p_val.
           ENDIF.
 
+          UNASSIGN <fs_val_str>.
         ENDLOOP.
 
-        IF lv_val1_str EQ lv_val2_str.
-          ev_cond_flow_res = abap_true.
-        ENDIF.
+
+        CASE lv_compare_operator.
+          WHEN 'NE'.
+            IF lv_val1_str NE lv_val2_str.
+              ev_cond_flow_res = abap_true.
+            ENDIF.
+          WHEN 'GE'.
+            IF lv_val1_str GE lv_val2_str.
+              ev_cond_flow_res = abap_true.
+            ENDIF.
+          WHEN 'LE'.
+            IF lv_val1_str LE lv_val2_str.
+              ev_cond_flow_res = abap_true.
+            ENDIF.
+          WHEN 'GT'.
+            IF lv_val1_str GT lv_val2_str.
+              ev_cond_flow_res = abap_true.
+            ENDIF.
+          WHEN 'LT'.
+            IF lv_val1_str LT lv_val2_str.
+              ev_cond_flow_res = abap_true.
+            ENDIF.
+
+          WHEN OTHERS.
+            " default EQ
+            IF lv_val1_str EQ lv_val2_str.
+              ev_cond_flow_res = abap_true.
+            ENDIF.
+
+        ENDCASE.
 
 
       WHEN OTHERS.

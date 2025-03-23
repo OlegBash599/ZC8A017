@@ -43,6 +43,9 @@ CLASS lcl_florida_str DEFINITION.
     METHODS _preproc_florida_infunc
       IMPORTING is_src_params TYPE zif_c8a017_types=>ts_src_params.
 
+    METHODS _preproc_florida_condition
+      IMPORTING is_src_params TYPE zif_c8a017_types=>ts_src_params.
+
     METHODS _preproc_html
       IMPORTING is_src_params    TYPE zif_c8a017_types=>ts_src_params
       EXPORTING et_load_tab_html TYPE zif_c8a017_types=>tt_load_tab_html.
@@ -134,6 +137,11 @@ CLASS lcl_florida_str IMPLEMENTATION.
 
     IF msr_scr->infunc EQ abap_true.
       _preproc_florida_infunc( is_src_params = is_src_params ).
+      RETURN.
+    ENDIF.
+
+    IF msr_scr->condit EQ abap_true.
+      _preproc_florida_condition( is_src_params = is_src_params ).
       RETURN.
     ENDIF.
 
@@ -270,6 +278,40 @@ CLASS lcl_florida_str IMPLEMENTATION.
 
     mt_file_lines = lt_file_lines.
 
+  ENDMETHOD.
+
+  METHOD _preproc_florida_condition.
+    TYPES: BEGIN OF ts_cntx
+, but_one   TYPE string
+, but_two   TYPE string
+, but_three TYPE string
+, but_four  TYPE string
+, show_f1_link  TYPE string
+, END OF  ts_cntx
+.
+
+    DATA ls_cntx TYPE ts_cntx.
+
+    DATA lv_final_str TYPE string.
+    DATA lt_file_lines TYPE zif_c8a017_types=>tt_tline_str.
+
+    ls_cntx-but_one = 'Кнопка_Один'.
+    ls_cntx-but_two = 'Кнопка_Два'.
+    "ls_cntx-but_three = 'Кнопка_Три'.
+    ls_cntx-but_four = 'Кнопка_ЧТРЕ'.
+    ls_cntx-show_f1_link = abap_true.
+
+    NEW zcl_c8a017_templ_with_data(  )->proc_templ(
+      EXPORTING
+        it_lines     = mt_file_lines
+        is_src       = ls_cntx
+        is_env_params = is_src_params
+      IMPORTING
+        ev_final_str = lv_final_str
+        et_res_lines = lt_file_lines
+    ).
+
+    mt_file_lines = lt_file_lines.
   ENDMETHOD.
 
   METHOD _get_func_params.

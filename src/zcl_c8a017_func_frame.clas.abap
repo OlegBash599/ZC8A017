@@ -62,11 +62,24 @@ CLASS zcl_c8a017_func_frame IMPLEMENTATION.
       ELSE.
         ev_val_str = <fs_val>.
       ENDIF.
-    ELSE.
-      ev_not_exist = abap_true.
-      CLEAR ev_val_str.
       RETURN.
+    ELSE.
+      " for type pools vars
+      ASSIGN (iv_fnm) TO <fs_val>.
+      IF sy-subrc EQ 0.
+        IF <fs_val> IS INITIAL.
+          CLEAR ev_val_str.
+          RETURN.
+        ENDIF.
+        ev_val_str = <fs_val>.
+        RETURN.
+      ENDIF.
     ENDIF.
+
+    ev_not_exist = abap_true.
+    CLEAR ev_val_str.
+    RETURN.
+
 
   ENDMETHOD.
 
@@ -87,8 +100,8 @@ CLASS zcl_c8a017_func_frame IMPLEMENTATION.
       IF ( strlen( <fs_line_str_sub>-tdline_str ) GE 3
             AND <fs_line_str_sub>-tdline_str(3) EQ '?/:' )
 
-         or ( <fs_line_str_sub>-tdline_str eq iv_operator_open
-               or <fs_line_str_sub>-tdline_str eq iv_operator_close )
+         OR ( <fs_line_str_sub>-tdline_str EQ iv_operator_open
+               OR <fs_line_str_sub>-tdline_str EQ iv_operator_close )
 
             .
 
