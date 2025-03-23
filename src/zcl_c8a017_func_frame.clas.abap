@@ -84,8 +84,12 @@ CLASS zcl_c8a017_func_frame IMPLEMENTATION.
     LOOP AT it_templ_all ASSIGNING <fs_line_str_sub> FROM iv_from_line
         WHERE tdformat EQ '*'.
       lv_templ_current_sub = sy-tabix.
-      IF strlen( <fs_line_str_sub>-tdline_str ) GE 3
-            AND <fs_line_str_sub>-tdline_str(3) EQ '?/:'
+      IF ( strlen( <fs_line_str_sub>-tdline_str ) GE 3
+            AND <fs_line_str_sub>-tdline_str(3) EQ '?/:' )
+
+         or ( <fs_line_str_sub>-tdline_str eq iv_operator_open
+               or <fs_line_str_sub>-tdline_str eq iv_operator_close )
+
             .
 
         IF <fs_line_str_sub>-tdline_str CS iv_operator_close.

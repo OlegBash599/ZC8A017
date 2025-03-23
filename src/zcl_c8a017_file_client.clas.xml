@@ -3,15 +3,22 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <VSEOCLASS>
-    <CLSNAME>ZCL_C8A017_LINE_PROCTYPE</CLSNAME>
+    <CLSNAME>ZCL_C8A017_FILE_CLIENT</CLSNAME>
     <LANGU>E</LANGU>
-    <DESCRIPT>Processing Type for Line</DESCRIPT>
+    <DESCRIPT>FIle Path</DESCRIPT>
     <STATE>1</STATE>
     <CLSCCINCL>X</CLSCCINCL>
     <FIXPT>X</FIXPT>
     <UNICODE>X</UNICODE>
-    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
    </VSEOCLASS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>READ_FILE_AS_LINES</CMPNAME>
+     <SCONAME>ET_FILE_LINES</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Table with Strings</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
   </asx:values>
  </asx:abap>
 </abapGit>

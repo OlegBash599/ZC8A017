@@ -13,6 +13,7 @@ INTERFACE zif_c8a017_func
               is_line_str     TYPE zif_c8a017_types=>ts_tline_str
               iv_line_num     TYPE syindex
               is_cntx         TYPE any
+              is_env_params   TYPE zif_c8a017_types=>ts_src_params
     CHANGING  cs_flow_control TYPE zif_c8a017_types=>ts_flow_control.
 
 

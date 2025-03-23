@@ -27,6 +27,12 @@ CLASS zcl_c8a017_line_proctype DEFINITION
       IMPORTING is_line_str      TYPE zif_c8a017_types=>ts_tline_str
       EXPORTING es_infunc_params TYPE ts_infunc_params.
 
+    METHODS _if_tab_replace
+      IMPORTING is_templ_cur   TYPE zif_c8a017_types=>ts_tline_str
+      CHANGING  cs_func_params TYPE ts_infunc_params
+      RETURNING VALUE(rc)      TYPE sysubrc.
+
+
 ENDCLASS.
 
 
@@ -45,6 +51,9 @@ CLASS zcl_c8a017_line_proctype IMPLEMENTATION.
 
     DATA ls_infunc_params TYPE ts_infunc_params.
     FIELD-SYMBOLS <fs_func_info> TYPE zif_c8a017_types=>ts_func_info.
+
+    CLEAR es_func_params.
+
     es_func_params-proc_type = zif_c8a017_hardvals=>mc_proc_type-move_as_it_is.
 
     IF strlen( is_templ_cur-tdline_str ) GE 3.
@@ -54,7 +63,7 @@ CLASS zcl_c8a017_line_proctype IMPLEMENTATION.
                             IMPORTING es_infunc_params = ls_infunc_params ).
 
         READ TABLE mt_func_info ASSIGNING <fs_func_info>
-            WITH KEY func_name = ls_infunc_params-func_name.
+            WITH KEY func_name = to_upper( ls_infunc_params-func_name ).
         IF sy-subrc EQ 0.
           es_func_params = ls_infunc_params.
           es_func_params-proc_type = <fs_func_info>-proc_type.
@@ -70,6 +79,7 @@ CLASS zcl_c8a017_line_proctype IMPLEMENTATION.
     ENDIF.
 
     """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
     DATA lv_regex_var TYPE string.
     DATA lt_results_match TYPE match_result_tab.
     DATA ls_func_param TYPE ts_func_param.
@@ -96,8 +106,70 @@ CLASS zcl_c8a017_line_proctype IMPLEMENTATION.
       RETURN.
     ENDIF.
 
+    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+    IF _if_tab_replace(
+        EXPORTING is_templ_cur  = is_templ_cur
+        CHANGING cs_func_params = es_func_params
+        ) EQ 0.
+      RETURN.
+    ENDIF.
+
 
   ENDMETHOD.
+
+  METHOD _if_tab_replace.
+*    IMPORTING is_templ_cur   TYPE zif_c8a017_types=>ts_tline_str
+*    CHANGING  cs_func_params TYPE ts_infunc_params
+*    RETURNING VALUE(rc)      TYPE sysubrc.
+
+    rc = 1.
+
+    DATA lv_regex_var_tab TYPE string .
+
+    DATA lt_results_match TYPE match_result_tab.
+    DATA ls_func_param TYPE ts_func_param.
+
+    DATA lv_length_var TYPE syindex.
+    DATA lv_var_name TYPE string.
+
+    FIELD-SYMBOLS <fs_result_match> TYPE match_result.
+    FIELD-SYMBOLS <fs_func_info> TYPE zif_c8a017_types=>ts_func_info.
+
+    lv_regex_var_tab = zif_c8a017_hardvals=>mc_reg-regex_tab_var_beg.
+
+    FIND ALL OCCURRENCES OF REGEX lv_regex_var_tab IN is_templ_cur-tdline_str
+         RESULTS lt_results_match.
+    IF lines( lt_results_match ) > 0.
+
+      cs_func_params-proc_type = zif_c8a017_hardvals=>mc_proc_type-flow_control.
+      cs_func_params-func_name = 'FIND_N_REP_TAB'.
+      cs_func_params-func_processor =
+       VALUE #( mt_func_info[ func_name = cs_func_params-func_name ]-func_processor OPTIONAL ).
+
+      LOOP AT lt_results_match ASSIGNING <fs_result_match>.
+        CLEAR ls_func_param.
+        ls_func_param-p_name = is_templ_cur-tdline_str+<fs_result_match>-offset(<fs_result_match>-length).
+
+        lv_var_name     = ls_func_param-p_name+2.
+        lv_length_var   = strlen( lv_var_name ).
+        lv_length_var   = lv_length_var - 1.
+        lv_var_name     = lv_var_name(lv_length_var).
+
+        ls_func_param-p_val = lv_var_name.
+
+        APPEND ls_func_param TO cs_func_params-t_func_params.
+
+        rc = 0.
+
+        " only one tab allowed in line
+        EXIT.
+      ENDLOOP.
+
+    ENDIF.
+
+  ENDMETHOD.
+
 
   METHOD _parse_infunc_data.
     "IMPORTING is_line_str      TYPE zif_c8a017_types=>ts_tline_str
@@ -128,18 +200,42 @@ CLASS zcl_c8a017_line_proctype IMPLEMENTATION.
         INTO TABLE lt_func_params_str.
 
     FIELD-SYMBOLS <fs_func_params> TYPE string.
-    LOOP AT lt_func_params_str ASSIGNING <fs_func_params>.
-      CLEAR ls_func_param.
-      IF <fs_func_params> CS lv_str_sep_eq.
-        SPLIT <fs_func_params> AT lv_str_sep_eq
-            INTO ls_func_param-p_name ls_func_param-p_val.
+    FIELD-SYMBOLS <fs_func_info> TYPE zif_c8a017_types=>ts_func_info.
+
+
+    lv_func_name = to_upper( lv_func_name ).
+
+    READ TABLE mt_func_info ASSIGNING <fs_func_info>
+        WITH KEY func_name = lv_func_name.
+    IF sy-subrc EQ 0.
+      IF <fs_func_info>-no_name_val_param EQ abap_true.
+        LOOP AT lt_func_params_str ASSIGNING <fs_func_params>.
+          CLEAR ls_func_param.
+          ls_func_param-p_val = <fs_func_params>.
+
+
+          IF ls_func_param IS NOT INITIAL.
+            APPEND ls_func_param TO lt_func_param.
+          ENDIF.
+
+        ENDLOOP.
+
       ELSE.
-        ls_func_param-p_val = <fs_func_params>.
+        LOOP AT lt_func_params_str ASSIGNING <fs_func_params>.
+          CLEAR ls_func_param.
+          IF <fs_func_params> CS lv_str_sep_eq.
+            SPLIT <fs_func_params> AT lv_str_sep_eq
+                INTO ls_func_param-p_name ls_func_param-p_val.
+          ELSE.
+            ls_func_param-p_val = <fs_func_params>.
+          ENDIF.
+          IF ls_func_param IS NOT INITIAL.
+            APPEND ls_func_param TO lt_func_param.
+          ENDIF.
+        ENDLOOP.
       ENDIF.
-      IF ls_func_param IS NOT INITIAL.
-        APPEND ls_func_param TO lt_func_param.
-      ENDIF.
-    ENDLOOP.
+    ENDIF.
+
 
 
     es_infunc_params-func_name = lv_func_name.
@@ -151,7 +247,8 @@ CLASS zcl_c8a017_line_proctype IMPLEMENTATION.
     mt_func_info = VALUE #(
 
     (  func_name = 'VMESTE' func_processor = 'ZCL_C8A017_FUNC_CONV'
-        proc_type = zif_c8a017_hardvals=>mc_proc_type-calc_conv_func )
+        proc_type = zif_c8a017_hardvals=>mc_proc_type-calc_conv_func
+            no_name_val_param = abap_true )
 
     (  func_name = 'IF_BEG' func_processor = 'ZCL_C8A017_FUNC_FLOW'
         proc_type = zif_c8a017_hardvals=>mc_proc_type-flow_control )
@@ -159,8 +256,16 @@ CLASS zcl_c8a017_line_proctype IMPLEMENTATION.
     (  func_name = 'FOR_BEG' func_processor = 'ZCL_C8A017_FUNC_TABFOR'
         proc_type = zif_c8a017_hardvals=>mc_proc_type-flow_control )
 
+    (  func_name = 'INCLUDE_FROM' func_processor = 'ZCL_C8A017_FUNC_INCLFROM'
+        proc_type = zif_c8a017_hardvals=>mc_proc_type-flow_control )
+
+
+
     (  func_name = 'FIND_N_REPLACE' proc_type = zif_c8a017_hardvals=>mc_proc_type-find_and_replace )
-    (  func_name = 'FIND_N_REP_TAB' proc_type = zif_c8a017_hardvals=>mc_proc_type-find_and_replace )
+
+    " = should be the same as FOR_BEG with no add params =
+    (  func_name = 'FIND_N_REP_TAB' proc_type = zif_c8a017_hardvals=>mc_proc_type-flow_control
+        func_processor = 'ZCL_C8A017_FUNC_TABFOR' )
 
 
     ).

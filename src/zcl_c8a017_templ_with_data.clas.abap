@@ -8,9 +8,11 @@ CLASS zcl_c8a017_templ_with_data DEFINITION
     METHODS constructor.
 
     METHODS proc_templ
-      IMPORTING it_lines     TYPE zif_c8a017_types=>tt_tline_str
-                is_src       TYPE any
-      EXPORTING ev_final_str TYPE string.
+      IMPORTING it_lines      TYPE zif_c8a017_types=>tt_tline_str
+                is_src        TYPE any
+                is_env_params TYPE zif_c8a017_types=>ts_src_params OPTIONAL
+      EXPORTING ev_final_str  TYPE string
+                et_res_lines  TYPE zif_c8a017_types=>tt_tline_str.
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -19,10 +21,13 @@ CLASS zcl_c8a017_templ_with_data DEFINITION
 
     DATA msr_src TYPE REF TO data.
 
+    DATA ms_env_params TYPE zif_c8a017_types=>ts_src_params.
+
     METHODS _proc_templ_v2
       IMPORTING it_lines     TYPE zif_c8a017_types=>tt_tline_str
                 is_src       TYPE any
-      EXPORTING ev_final_str TYPE string.
+      EXPORTING ev_final_str TYPE string
+                et_res_lines TYPE zif_c8a017_types=>tt_tline_str.
 
     METHODS _exe_conv_func
       IMPORTING is_func_params TYPE ts_infunc_params
@@ -42,6 +47,16 @@ CLASS zcl_c8a017_templ_with_data DEFINITION
                 is_line_str    TYPE zif_c8a017_types=>ts_tline_str
                 is_src_cntx    TYPE any
       CHANGING  cs_line_res    TYPE zif_c8a017_types=>ts_tline_str.
+
+
+    METHODS _find_and_repl_tab
+      IMPORTING is_func_params  TYPE ts_infunc_params
+                it_templ_all    TYPE zif_c8a017_types=>tt_tline_str
+                is_line_str     TYPE zif_c8a017_types=>ts_tline_str
+                iv_line_num     TYPE syindex
+                is_src_cntx     TYPE any
+      CHANGING  cs_flow_control TYPE ts_flow_control.
+
 ENDCLASS.
 
 
@@ -52,9 +67,13 @@ CLASS zcl_c8a017_templ_with_data IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD proc_templ.
-*      IMPORTING it_lines     TYPE tline_tab
-*                is_src       TYPE any
-*      EXPORTING ev_final_str TYPE string.
+*      IMPORTING it_lines      TYPE zif_c8a017_types=>tt_tline_str
+*                is_src        TYPE any
+*                is_env_params TYPE zif_c8a017_types=>ts_src_params OPTIONAL
+*      EXPORTING ev_final_str  TYPE string
+*                et_res_lines  TYPE zif_c8a017_types=>tt_tline_str.
+
+    ms_env_params = is_env_params.
 
     _proc_templ_v2(
       EXPORTING
@@ -62,6 +81,7 @@ CLASS zcl_c8a017_templ_with_data IMPLEMENTATION.
         is_src       = is_src
       IMPORTING
         ev_final_str = ev_final_str
+        et_res_lines = et_res_lines
     ).
 
 
@@ -71,7 +91,8 @@ CLASS zcl_c8a017_templ_with_data IMPLEMENTATION.
   METHOD _proc_templ_v2.
 *      IMPORTING it_lines     TYPE zif_c8a017_types=>tt_tline_str
 *                is_src       TYPE any
-*      EXPORTING ev_final_str TYPE string.
+*      EXPORTING ev_final_str TYPE string
+*                et_res_lines TYPE zif_c8a017_types=>tt_tline_str.
     DATA lo_proc_type TYPE REF TO zcl_c8a017_line_proctype.
     lo_proc_type = NEW #(  ).
 
@@ -147,11 +168,11 @@ CLASS zcl_c8a017_templ_with_data IMPLEMENTATION.
           IF lines( ls_flow_control-lines_before_next ) > 0.
             APPEND LINES OF ls_flow_control-lines_before_next
                 TO lt_lines_res.
-            clear ls_flow_control-lines_before_next.
+            CLEAR ls_flow_control-lines_before_next.
           ENDIF.
 
           IF ls_flow_control-do_skip_this_line EQ abap_true.
-            clear ls_flow_control-do_skip_this_line.
+            CLEAR ls_flow_control-do_skip_this_line.
             CONTINUE.
           ENDIF.
 
@@ -163,6 +184,7 @@ CLASS zcl_c8a017_templ_with_data IMPLEMENTATION.
           IF ls_line_res IS NOT INITIAL.
             APPEND ls_line_res TO lt_lines_res.
           ENDIF.
+
         WHEN zif_c8a017_hardvals=>mc_proc_type-exclude_this_line.
           CONTINUE.
         WHEN OTHERS.
@@ -179,7 +201,7 @@ CLASS zcl_c8a017_templ_with_data IMPLEMENTATION.
         ev_final_str = ev_final_str && ` ` && <fs_line_str>-tdline_str.
       ENDIF.
     ENDLOOP.
-
+    et_res_lines = lt_lines_res.
 
 
   ENDMETHOD.
@@ -240,6 +262,7 @@ CLASS zcl_c8a017_templ_with_data IMPLEMENTATION.
                                     is_line_str    = is_line_str
                                     iv_line_num    = iv_line_num
                                     is_cntx        = is_src_cntx
+                                    is_env_params = ms_env_params
                            CHANGING cs_flow_control    = cs_flow_control ).
       CATCH cx_root INTO lx_root.
         RETURN.
@@ -265,6 +288,19 @@ CLASS zcl_c8a017_templ_with_data IMPLEMENTATION.
              WITH <fs_src_val>.
       ENDIF.
     ENDLOOP.
+
+
+  ENDMETHOD.
+
+  METHOD _find_and_repl_tab.
+*      IMPORTING is_func_params  TYPE ts_infunc_params
+*                it_templ_all    TYPE zif_c8a017_types=>tt_tline_str
+*                is_line_str     TYPE zif_c8a017_types=>ts_tline_str
+*                iv_line_num     TYPE syindex
+*                is_src_cntx     TYPE any
+*      CHANGING  cs_flow_control TYPE ts_flow_control.
+
+  "  data lo_finrepl_tab TYPE REF TO zcl_c8a017_func_vartab.
 
 
   ENDMETHOD.

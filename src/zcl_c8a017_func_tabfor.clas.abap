@@ -31,34 +31,60 @@ CLASS zcl_c8a017_func_tabfor IMPLEMENTATION.
 *              iv_line_num     TYPE syindex
 *              is_cntx         TYPE any
 *    CHANGING  cs_flow_control TYPE zif_c8a017_types=>ts_flow_control.
+    DATA lv_open_operator TYPE string.
     DATA lv_close_operator TYPE string.
 
     DATA lv_tab_name TYPE string.
     FIELD-SYMBOLS <fs_tab> TYPE table.
     FIELD-SYMBOLS <fs_line> TYPE any.
 
+    DATA lv_do_function TYPE abap_bool.
+
+    DATA ls_func_param TYPE zif_c8a017_types=>ts_func_param.
+
+
     IF is_func_params-func_name EQ 'FOR_BEG'.
+      lv_open_operator  = is_func_params-func_name.
       lv_close_operator = 'FOR_END'.
+      lv_do_function    = abap_true.
+
+      lv_tab_name =
+        mo_func_frame->get_trg_fieldname(
+          iv_rtti_param =
+          VALUE #( is_func_params-t_func_params[ 1 ]-p_val OPTIONAL )
+          ).
+
+    ENDIF.
+
+
+    IF is_func_params-func_name EQ 'FIND_N_REP_TAB'.
+      ls_func_param = VALUE #( is_func_params-t_func_params[ 1 ] OPTIONAL ).
+      IF ls_func_param IS NOT INITIAL.
+        lv_open_operator  = '$[' && ls_func_param-p_val && '$'.
+        lv_close_operator = '$'  && ls_func_param-p_val && ']$'.
+
+        lv_do_function = abap_true.
+
+        lv_tab_name = ls_func_param-p_val.
+      ENDIF.
+
+    ENDIF.
+
+    IF lv_tab_name IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    IF lv_do_function EQ abap_true.
 
       cs_flow_control-do_skip_this_line = abap_true.
       mo_func_frame->fill_line_after_close(
-         EXPORTING it_templ_all = it_templ_all
-                   iv_from_line = iv_line_num
-                   iv_operator_open = is_func_params-func_name
+         EXPORTING it_templ_all      = it_templ_all
+                   iv_from_line      = iv_line_num
+                   iv_operator_open  = lv_open_operator
                    iv_operator_close = lv_close_operator
-         CHANGING cs_flow_control = cs_flow_control
+         CHANGING cs_flow_control    = cs_flow_control
       ).
 
-
-      lv_tab_name =
-      mo_func_frame->get_trg_fieldname(
-        iv_rtti_param =
-        VALUE #( is_func_params-t_func_params[ 1 ]-p_val OPTIONAL )
-        ).
-
-      IF lv_tab_name IS INITIAL.
-        RETURN.
-      ENDIF.
 
       """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -67,6 +93,8 @@ CLASS zcl_c8a017_func_tabfor IMPLEMENTATION.
       DATA ls_html_res4line TYPE zif_c8a017_types=>ts_tline_str.
       DATA lt_templ4tab TYPE zif_c8a017_types=>tt_tline_str.
       FIELD-SYMBOLS <fs_templ_line> TYPE zif_c8a017_types=>ts_tline_str.
+
+      data lt_res_lines  TYPE zif_c8a017_types=>tt_tline_str.
 
       DATA lo_templ_with_data TYPE REF TO zcl_c8a017_templ_with_data.
       CREATE OBJECT lo_templ_with_data.
@@ -91,9 +119,11 @@ CLASS zcl_c8a017_func_tabfor IMPLEMENTATION.
               is_src       = <fs_line>
             IMPORTING
               ev_final_str = ls_html_res4line-tdline_str
+              et_res_lines = lt_res_lines
           ).
-          ls_html_res4line-tdformat = '*'.
-          APPEND ls_html_res4line TO cs_flow_control-lines_before_next.
+        "  ls_html_res4line-tdformat = '*'.
+        "  APPEND ls_html_res4line TO cs_flow_control-lines_before_next.
+        APPEND LINES OF lt_res_lines to cs_flow_control-lines_before_next.
         ENDLOOP.
       ENDIF.
 

@@ -3,6 +3,8 @@ INTERFACE zif_c8a017_hardvals
 
   CONSTANTS: BEGIN OF mc_reg
                  , regex_word_var TYPE string VALUE '\$\w+\$'
+                 , regex_tab_var_beg TYPE string VALUE '\$\[\w+\$'
+                 , regex_tab_var_end TYPE string VALUE '\$\w+\]\$'
              , END OF mc_reg
              .
 
