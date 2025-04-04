@@ -2,7 +2,7 @@
 FloridaString: Flowery StringTemplates for S/4 HANA
 
 Шаблонизатор для использования в ERP. Работает на основе SapScript, Web-template, и любых текстовых файлов.
-DataDrivenTes-формат и шаблонизатор для SAP S/4 HANA.
+DataDrivenTest-формат и шаблонизатор для SAP S/4 HANA.
 
 Подробнее
 1) Как использовать sap-script тексты ([sapland.ru](https://sappro.sapland.ru/publications/vlozhennie-texti-kak-vozmozhnosti-dlya-kompozitsii-razdeleniya-na-chasti-v-dlinn.html) [dzen](https://dzen.ru/a/ZtsCgjkvRgtUwfHz) [habr](https://habr.com/ru/articles/841422/) )
