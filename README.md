@@ -1,5 +1,5 @@
 # ZC8A017 / FloridaString
-FloridaString: Templates for S/4 HANA
+FloridaString: Flowery StringTemplates for S/4 HANA
 
 Шаблонизатор для использования в ERP. Работает на основе SapScript, Web-template, и любых текстовых файлов.
 DataDrivenTes-формат и шаблонизатор для SAP S/4 HANA.
@@ -24,4 +24,4 @@ DataDrivenTes-формат и шаблонизатор для SAP S/4 HANA.
 2) [xsl-include](https://developer.mozilla.org/en-US/docs/Web/XSLT/Element/include) и [xsl-include-xslt-dev](https://xsltdev.ru/xslt/xsl-include/)
 
 #### notes
-Framework is called FloridaString that the strings in framework are "flowery" and "blossom". Also Florida is Russian women's name (e.g. Leningrad's singer [Florida Chanturia](https://vk.com/florida88888) and [bio is here](https://uznayvse.ru/znamenitosti/biografiya-floridachanturiya.html) and [interview is here](https://www.youtube.com/watch?v=-_ipRTB4Qvs)).
+Framework is called FloridaString that the strings in framework are "flowery" and "blossom". The framework uses different approaches and technologies and it is like flowers in nature.
