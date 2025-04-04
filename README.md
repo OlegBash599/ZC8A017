@@ -24,4 +24,4 @@ DataDrivenTes-формат и шаблонизатор для SAP S/4 HANA.
 2) [xsl-include](https://developer.mozilla.org/en-US/docs/Web/XSLT/Element/include) и [xsl-include-xslt-dev](https://xsltdev.ru/xslt/xsl-include/)
 
 #### notes
-Framework is called FloridaString because of Leningrad's singer [Florida Chanturia](https://vk.com/florida88888) and [bio is here](https://uznayvse.ru/znamenitosti/biografiya-floridachanturiya.html)
+Framework is called FloridaString that the strings in framework are "flowery" and "blossom". Also Florida is Russian women's name (e.g. Leningrad's singer [Florida Chanturia](https://vk.com/florida88888) and [bio is here](https://uznayvse.ru/znamenitosti/biografiya-floridachanturiya.html) ).
