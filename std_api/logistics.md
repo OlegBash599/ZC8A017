@@ -1,6 +1,6 @@
-#STD API to be wrapped firstly
+# STD API to be wrapped firstly
 
-##Availability Check
+## Availability Check
 ```abap
 
     TYPES: BEGIN OF ts_bapi_in
