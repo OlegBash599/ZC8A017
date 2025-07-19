@@ -1,8 +1,10 @@
 # ZC8A017 / FloridaString
 FloridaString: Flowery StringTemplates for S/4 HANA
 
-Шаблонизатор для использования в ERP. Работает на основе SapScript, Web-template, и любых текстовых файлов.
-DataDrivenTest-формат и шаблонизатор для SAP S/4 HANA.
+## Functions:
+1)Шаблонизатор для использования в ERP. Работает на основе SapScript, Web-template, и любых текстовых файлов.
+2) DataDrivenTest-формат и шаблонизатор для SAP S/4 HANA.
+3) Conversion of num to ordinal string; month num to month-string.
 
 Подробнее
 1) Как использовать sap-script тексты ([sapland.ru](https://sappro.sapland.ru/publications/vlozhennie-texti-kak-vozmozhnosti-dlya-kompozitsii-razdeleniya-na-chasti-v-dlinn.html) [dzen](https://dzen.ru/a/ZtsCgjkvRgtUwfHz) [habr](https://habr.com/ru/articles/841422/) )
