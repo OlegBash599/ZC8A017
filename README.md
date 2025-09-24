@@ -27,3 +27,6 @@ FloridaString: Flowery StringTemplates for S/4 HANA
 
 #### notes
 Framework is called FloridaString that the strings in framework are "flowery" and "blossom". The framework uses different approaches and technologies and it is like flowers in nature.
+
+#### All Rights Reserved (c)
+(Soft is registered and has author)[https://searchplatform.rospatent.gov.ru/doc-tims/RU2025614867ПрЭВМ_20250226]
